@@ -2,7 +2,7 @@ from datetime import timedelta, datetime
 from typing import Optional
 
 from fastapi.security import OAuth2PasswordBearer
-from jwt import jwt
+import jwt
 from passlib.context import CryptContext
 
 password_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
