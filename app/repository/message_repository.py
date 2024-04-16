@@ -1,17 +1,12 @@
-class UserRepository:
+from datetime import datetime
 
-    async def get_user(self, session: AsyncSession, id: int):
-        query = select(User).where(User.id == id)
-        result = await session.execute(query)
-        user = result.scalars().first()
-        return user
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
-    async def get_user_by_username(self, session: AsyncSession, username: str):
-        query = select(User).where(User.username == username)
-        result = await session.execute(query)
-        user = result.scalars().first()
-        return user
+from app.model.models import Message
 
+
+class MessageRepo:
     async def get_messages(self, session: AsyncSession):
         query = select(Message).order_by(Message.created_at.asc())
         result = await session.execute(query)
@@ -51,14 +46,3 @@ class UserRepository:
         await session.flush()
         await session.refresh(message)
         return message
-
-    async def create_user(self, session: AsyncSession, username, password):
-        hashed_password = hash_password(password)
-
-        user = User(username=username, hashed_password=hashed_password)
-        session.add(user)
-        await session.flush()
-        await session.refresh(user)
-        return user
-
-

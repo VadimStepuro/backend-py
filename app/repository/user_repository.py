@@ -1,12 +1,23 @@
-from datetime import datetime
-
-from sqlalchemy import select
+from app.model.models import User, Message
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
+from datetime import datetime
+from app.service.auth_service import hash_password
 
-from model.models import Message
+class UserRepository:
 
+    async def get_user(self, session: AsyncSession, id: int):
+        query = select(User).where(User.id == id)
+        result = await session.execute(query)
+        user = result.scalars().first()
+        return user
 
-class MessageRepo:
+    async def get_user_by_username(self, session: AsyncSession, username: str):
+        query = select(User).where(User.username == username)
+        result = await session.execute(query)
+        user = result.scalars().first()
+        return user
+
     async def get_messages(self, session: AsyncSession):
         query = select(Message).order_by(Message.created_at.asc())
         result = await session.execute(query)
@@ -46,3 +57,14 @@ class MessageRepo:
         await session.flush()
         await session.refresh(message)
         return message
+
+    async def create_user(self, session: AsyncSession, username, password):
+        hashed_password = hash_password(password)
+
+        user = User(username=username, hashed_password=hashed_password)
+        session.add(user)
+        await session.flush()
+        await session.refresh(user)
+        return user
+
+
