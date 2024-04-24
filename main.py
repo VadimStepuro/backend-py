@@ -11,8 +11,6 @@ from dotenv import load_dotenv
 
 
 def get_application() -> FastAPI:
-    load_dotenv()
-
     application = FastAPI()
 
     application.add_middleware(
@@ -33,7 +31,7 @@ def get_application() -> FastAPI:
         create_stop_app_handler(application),
     )
 
-    application.include_router(websockets_router, tags=["websockets"], prefix="/ws")
+    application.include_router(websockets_router, tags=["websockets"], prefix="/cable")
     application.include_router(authentication_router, tags=["authentication"], prefix="")
     application.include_router(message_controller, tags=["messages"], prefix="/messages")
 
