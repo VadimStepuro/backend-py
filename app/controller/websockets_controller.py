@@ -18,20 +18,25 @@ async def websocket_endpoint(
 ):
     try:
         await websocket.accept()
+
         manager.add(websocket)
+
         chat_history = await repository.get_messages(session)
-        print([i._asdict()['Message'].to_dict() for i in chat_history])
+
         await websocket.send_json({
             "message": {
                 "type": "connection",
-                "data": [i._asdict()['Message'].to_dict() for i in chat_history]
+                "data": [i._asdict()['Message'].to_json_object() for i in chat_history]
             }
         })
 
+        print("New connection was established with " + str(websocket.headers))
+
         while True:
-            data = await websocket.receive_json()
-            print(data)
+            await websocket.receive_json()
     except Exception as e:
         print("Error in websocket:", e)
+
         await manager.remove(websocket)
+
         return HTTPException(status_code=500, detail="Error in websocket")

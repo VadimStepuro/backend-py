@@ -26,7 +26,7 @@ class RegisterUser(BaseModel):
         return value
 
     @validator('confirmation_password')
-    def passwords_match(cls, v, values, **kwargs):
+    def passwords_match(cls, v, values):
         if 'password' in values and v != values['password']:
             raise ValueError('Passwords do not match')
 

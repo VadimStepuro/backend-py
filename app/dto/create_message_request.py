@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
 
-class EditMessage(BaseModel):
+class CreateMessageRequest(BaseModel):
     user_id: int
     content: str
