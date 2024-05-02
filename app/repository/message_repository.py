@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.model.models import Message
 
 
-class MessageRepo:
+class MessageRepository:
     async def get_messages(self, session: AsyncSession):
         query = select(Message).order_by(Message.created_at.asc())
         result = await session.execute(query)

@@ -2,11 +2,17 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from .events import create_start_app_handler, create_stop_app_handler
+from events import create_start_app_handler, create_stop_app_handler
 from app.controller.websockets_controller import router as websockets_router
+from app.controller.authentication_controller import router as authentication_router
+from app.controller.message_controller import router as message_controller
+
+from dotenv import load_dotenv
 
 
 def get_application() -> FastAPI:
+    load_dotenv()
+
     application = FastAPI()
 
     application.add_middleware(
@@ -27,7 +33,9 @@ def get_application() -> FastAPI:
         create_stop_app_handler(application),
     )
 
-    application.include_router(websockets_router.router, tags=["websockets"], prefix="/ws")
+    application.include_router(websockets_router, tags=["websockets"], prefix="/ws")
+    application.include_router(authentication_router, tags=["authentication"], prefix="")
+    application.include_router(message_controller, tags=["messages"], prefix="/messages")
 
     return application
 
@@ -35,6 +43,6 @@ def get_application() -> FastAPI:
 app = get_application()
 
 
-if __name__ == "__mian__":
+if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="127.0.0.1", port=3000)
